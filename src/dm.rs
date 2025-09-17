@@ -67,7 +67,6 @@ impl DmTicket {
         }
     }
 
-    // 生成订单
     pub async fn build_order(&self, item_id: &String, sku_id: &String) -> Result<OrderInfo> {
         let start = Instant::now();
 
@@ -90,13 +89,11 @@ impl DmTicket {
         }
     }
 
-    // 提交订单
     pub async fn submit_order(&self, order_info: OrderInfo) -> Result<DmRes> {
         let start = Instant::now();
 
         let url = "https://mtop.damai.cn/h5/mtop.trade.order.create.h5/4.0/";
 
-        // 添加提交订单需要的数据
         let mut order_data = json!({});
 
         for key in order_info.linkage.input.iter() {
@@ -123,11 +120,9 @@ impl DmTicket {
             }
         }
 
-        // 添加confirmOrder_1
         let confirm_order_key = &order_info.hierarchy.root;
         order_data[confirm_order_key] = order_info.data[confirm_order_key].clone();
 
-        // 添加order_xxxxx
         let keys_list = order_info.hierarchy.structure[confirm_order_key].clone();
         for k in keys_list.as_array().unwrap() {
             let s = k.as_str().unwrap();
